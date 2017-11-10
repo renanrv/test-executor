@@ -32,3 +32,11 @@ class MainTestCase(APITestCase):
         self.assertIn('status', test_request)
         self.assertIn('environment', test_request)
         self.assertIn('requester', test_request)
+
+    def test_get_test_templates_list(self):
+        url = reverse('rest-api:test-request-template')
+        data = {}
+        response = self.client.get(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for test_request in response.data:
+            self.assertIn('name', test_request)
