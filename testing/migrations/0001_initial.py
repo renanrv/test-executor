@@ -6,6 +6,21 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
+def data_migrations(apps, schema_editor):
+    Environment = apps.get_model("testing", "Environment")
+
+    for _ in range(0, 100):
+        environment = Environment()
+        environment.is_available = True
+        environment.save()
+
+
+def reverse_data_migrations(apps, schema_editor):
+    Environment = apps.get_model("testing", "Environment")
+
+    Environment.objects.all().delete()
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -43,12 +58,13 @@ class Migration(migrations.Migration):
                 ('created_on', models.DateTimeField(auto_now_add=True, verbose_name='creation date')),
                 ('template', models.CharField(max_length=255, verbose_name='template')),
                 ('status', models.IntegerField(choices=[(0, 'Requested'), (1, 'Succeeded'), (2, 'Failed')], verbose_name='status')),
-                ('environment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='requests.Environment', verbose_name='environment')),
-                ('requester', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='requests.Requester', verbose_name='requester')),
+                ('environment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='testing.Environment', verbose_name='environment')),
+                ('requester', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='testing.Requester', verbose_name='requester')),
             ],
             options={
                 'verbose_name': 'Test Request',
                 'verbose_name_plural': 'Test Requests',
             },
         ),
+        migrations.RunPython(data_migrations, reverse_code=reverse_data_migrations),
     ]

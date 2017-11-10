@@ -1,0 +1,16 @@
+[
+  {
+    "model": "testing.requester",
+    "pk": 1,
+    "fields": {
+      "name": "Jenkins"
+    }
+  },
+  {
+    "model": "testing.requester",
+    "pk": 2,
+    "fields": {
+      "name": "Stefan"
+    }
+  }
+]

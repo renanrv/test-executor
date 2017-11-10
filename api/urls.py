@@ -1,0 +1,12 @@
+# -*- coding: utf-8 -*-
+from api.views.testing.test_request import TestRequestViewSet
+from rest_framework.routers import DefaultRouter
+
+
+urlpatterns = [
+]
+
+router = DefaultRouter(trailing_slash=False)
+router.register(r'test-request', TestRequestViewSet, 'test-request')
+
+urlpatterns += router.urls

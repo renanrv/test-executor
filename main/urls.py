@@ -15,7 +15,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework.documentation import include_docs_urls
 
 API_TITLE = 'Test Executor API'
@@ -23,6 +23,6 @@ API_DESCRIPTION = 'A Web API for running and managing Python-based tests'
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    # url(r'^rest-api/', include('api.urls', namespace='rest-api')),
+    url(r'^rest-api/', include('api.urls', namespace='rest-api')),
     url(r'^rest-api/docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION))
 ]
