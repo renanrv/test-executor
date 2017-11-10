@@ -7,7 +7,8 @@
       "created_on": "2017-11-10T21:48:52",
       "environment": 1,
       "template": "test_test_request_api.py",
-      "status": 1
+      "status": 1,
+      "log": "OK"
     }
   },
   {
@@ -18,7 +19,8 @@
       "created_on": "2017-11-10T21:50:52",
       "environment": 2,
       "template": "Custom test directory: regression_tests/test_case_API_clear_datacenter_parameterized.py",
-      "status": 2
+      "status": 2,
+      "log": "FAILED (failures=1)"
     }
   }
 ]

@@ -10,6 +10,7 @@ class TestRequest(models.Model):
     environment = models.ForeignKey('testing.Environment', verbose_name=u"environment")
     template = models.CharField(max_length=255, verbose_name=u"template")
     status = models.IntegerField(choices=TEST_REQUEST_STATUS_CHOICES, verbose_name=u"status")
+    log = models.TextField(null=True, blank=True, verbose_name=u"log")
 
     class Meta:
         verbose_name = u"Test Request"
