@@ -1,0 +1,34 @@
+<h1>Test Execution Requests</h1>
+<div class="row col-sm-6">
+	<form>
+		<label>Create new Test Execution Request:</label>
+		<div class="form-group">
+			<label for="requester">Requester:</label>
+			<input type="text" class="form-control" id="requester">
+		</div>
+		<div class="form-group">
+			<label for="environment">Test Environment:</label>
+			<select class="form-control" id="environment">
+			    <option value="">------</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="test-runner">Test Runner:</label>
+			<select class="form-control" id="test-runner">
+			    <option value="">------</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="template">Test Template:</label>
+			<select class="form-control" id="template">
+			    <option value="">------</option>
+			</select>
+		</div>
+		<div class="form-group">
+			<label for="custom-path">Custom path:</label>
+			<input type="text" class="form-control" id="custom-path">
+			(This path is relative to the test-executor/test/ subdirectory)
+		</div>
+		<button type="button" class="btn btn-default">Submit</button>
+	</form>
+</div>
