@@ -60,6 +60,7 @@ class Migration(migrations.Migration):
                 ('status', models.IntegerField(choices=[(0, 'Requested'), (1, 'Succeeded'), (2, 'Failed')], verbose_name='status')),
                 ('environment', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='testing.Environment', verbose_name='environment')),
                 ('requester', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='testing.Requester', verbose_name='requester')),
+                ('test_runner', models.IntegerField(choices=[(0, 'unittest'), (1, 'py.test'), (2, 'nose'), (3, 'Django TestCase')], verbose_name='test runner')),
                 ('log', models.TextField(blank=True, null=True, verbose_name='log')),
             ],
             options={
