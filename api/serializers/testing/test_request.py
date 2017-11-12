@@ -10,9 +10,10 @@ class CodeSerializer(serializers.Serializer):
 
 class TestRequestQuerySerializer(serializers.Serializer):
     template = serializers.CharField()
-    custom_path = serializers.CharField()
-    envrionment = serializers.IntegerField()
+    custom_path = serializers.CharField(required=False)
+    environment = serializers.IntegerField()
     requester = serializers.CharField()
+    test_runner = serializers.IntegerField()
 
 
 class TestRequestSerializer(serializers.ModelSerializer):

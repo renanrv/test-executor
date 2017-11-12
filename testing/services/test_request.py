@@ -8,6 +8,7 @@ from testing.constants import TEST_TEMPLATES_PATH, TEST_REQUEST_LOG_FILENAME, \
 from testing.models.test_request import TestRequest
 from testing.services.environment import EnvironmentService
 from testing.services.requester import RequesterService
+from testing.tasks import execute_test_request
 from testing.value_objects import TemplateValueObject
 import io
 import subprocess
@@ -30,18 +31,20 @@ class TestRequestService():
         custom_path = serialized_test_request.validated_data.get('custom_path')
         environment_id = serialized_test_request.validated_data.get('environment')
         requester_name = serialized_test_request.validated_data.get('requester')
+        test_runner = serialized_test_request.validated_data.get('test_runner')
         template = serialized_test_request.validated_data.get('template')
 
         # TODO: check if environment is available
         test_request = cls._save_test_request(environment_id,
                                               requester_name,
+                                              test_runner,
                                               template,
                                               custom_path)
 
         template_for_execution = cls._get_test_request_template_for_execution(test_request,
                                                                               template,
                                                                               custom_path)
-        cls._run_test(test_request, template_for_execution)
+        execute_test_request.delay(test_request.id, template_for_execution)
         return test_request
 
     @classmethod
@@ -150,14 +153,14 @@ class TestRequestService():
         return TEST_RUNNER_CHOICES[0][0]
 
     @classmethod
-    def _run_test(cls, test_request, template):
+    def run_test_request(cls, test_request, template):
         filename = TEST_REQUEST_LOG_FILENAME % test_request.id
         command = cls._get_test_runner_command(test_request, template)
         log = ""
         with io.open(filename, 'wb') as writer, io.open(filename, 'rb', 1) as reader:
             process = subprocess.Popen(command, stdout=writer, stderr=writer)
             while process.poll() is None:
-                log += reader.read().decode(sys.stdout.encoding)
+                log += reader.read().decode('utf-8')
             reader.read()
         test_request.log = log
         if cls.check_if_test_request_log_displays_success(test_request):
@@ -167,13 +170,14 @@ class TestRequestService():
         test_request.save(update_fields=['status', 'log'])
 
     @classmethod
-    def _save_test_request(cls, environment_id, requester_name, template, custom_path):
+    def _save_test_request(cls, environment_id, requester_name, test_runner, template, custom_path):
         test_request = TestRequest()
         test_request.environment = \
             EnvironmentService.get_environment_by_id(environment_id)
         test_request.requester = \
             RequesterService.get_or_create_requester_by_name(requester_name)
         test_request.created_on = datetime.now()
+        test_request.test_runner = test_runner
         test_request.template = \
             cls._get_test_request_template_from_template_and_custom_path(template,
                                                                          custom_path)

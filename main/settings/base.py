@@ -20,8 +20,13 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.abspath(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 MEDIA_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'media'))
 STATIC_ROOT = os.path.abspath(os.path.join(PROJECT_DIR, 'static-collected'))
-STATICFILES_DIRS = ()
-
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -67,10 +72,13 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+                "django.contrib.auth.context_processors.auth",
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.template.context_processors.i18n",
+                "django.template.context_processors.media",
+                "django.template.context_processors.static",
+                "django.template.context_processors.tz",
             ],
         },
     },
@@ -96,11 +104,12 @@ DATABASES = {
 
 # Cache settings.
 DEFAULT_CACHE = 'default'
+DEFAULT_CACHE_LOCATION = '127.0.0.1:11211'
 
 CACHES = {
     DEFAULT_CACHE: {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211'
+        'LOCATION': DEFAULT_CACHE_LOCATION
     }
 }
 
@@ -157,3 +166,19 @@ HOST_NAME = getattr(builtins, 'django_runserver_host', 'localhost')
 
 MEDIA_URL = '%s://%s/media/' % (URL_SCHEME, HOST_NAME)
 STATIC_URL = '%s://%s/static/' % (URL_SCHEME, HOST_NAME)
+
+RABBITMQ_HOST = 'localhost'
+RABBITMQ_USER = 'guest'
+RABBITMQ_PASSWORD = None
+
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_ENABLE_UTC = True
+CELERY_CREATE_MISSING_QUEUES = True
+CELERYD_TASK_SOFT_TIME_LIMIT = 60
+
+CELERY_ROUTES = {
+    "testing.tasks.execute_test_request": {"queue": "log"},
+}

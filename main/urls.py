@@ -20,6 +20,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.staticfiles.views import serve as staticfiles_serve
 from django.views.static import serve
 from rest_framework.documentation import include_docs_urls
+from testing.views import index
 from urllib.parse import urlparse
 import re
 
@@ -30,7 +31,8 @@ API_DESCRIPTION = 'A Web API for running and managing Python-based tests'
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^rest-api/', include('api.urls', namespace='rest-api')),
-    url(r'^rest-api/docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION))
+    url(r'^rest-api/docs/', include_docs_urls(title=API_TITLE, description=API_DESCRIPTION)),
+    url(r'tests$', index)
 ]
 
 urlpatterns += staticfiles_urlpatterns()
