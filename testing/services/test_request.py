@@ -14,7 +14,7 @@ from testing.models.test_request import TestRequest
 from testing.services.environment import EnvironmentService
 from testing.services.requester import RequesterService
 from testing.tasks import execute_test_request
-from testing.value_objects import TemplateValueObject
+from testing.value_objects import TemplateValueObject, TestRunnerValueObject
 import io
 import subprocess
 import sys
@@ -82,6 +82,14 @@ class TestRequestService():
     @classmethod
     def get_all_test_requests(cls):
         return TestRequest.objects.all()
+
+    @classmethod
+    def get_supported_test_runners(cls):
+        supported_test_runners = []
+        for test_runner in TEST_RUNNER_CHOICES:
+            supported_test_runners.append(TestRunnerValueObject(code=test_runner[0],
+                                                                name=test_runner[1]))
+        return supported_test_runners
 
     @classmethod
     def get_test_request_by_id(cls, test_request_id):

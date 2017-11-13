@@ -41,11 +41,12 @@ var testRequestService = {
 			if($this.html() == "Requested")
 				$this.parent().css('background-color','white');
 			else if($this.html() == "Succeeded")
-				$this.parent().css('background-color','green');
+				$this.parent().css('background-color','lightgreen');
 			else if($this.html() == "Failed")
 				$this.parent().css('background-color','red');
 			
 		})
+		$('.expan').unbind( "click" );
 		$('.expan').click(function () {
 			var $ul = $(this).find('span').next();
 			$(".inner_div").not($ul).hide();
@@ -80,6 +81,19 @@ var testRequestService = {
 		return row;
 	},
 	
+	getTemplates: function() {
+		$.get("/rest-api/test-request/template", function(data, status){
+	        if(status == "success") {
+	        	$.each(data, function(k, template) {
+	        		 $('#template').append($('<option>', { 
+	        		        value: template.name,
+	        		        text : template.name 
+	        		 }));
+	        	})
+	        }
+	    });
+	},
+	
 	getTestRequests: function() {
 		$.get("/rest-api/test-request", function(data, status){
 	        if(status == "success") {
@@ -107,6 +121,19 @@ var testRequestService = {
 	    });
 	},
 
+	getTestRunners: function() {
+		$.get("/rest-api/test-request/test-runner", function(data, status){
+	        if(status == "success") {
+	        	$.each(data, function(k, template) {
+	        		 $('#test-runner').append($('<option>', { 
+	        		        value: template.code,
+	        		        text : template.name 
+	        		 }));
+	        	})
+	        }
+	    });
+	},
+	
 	runTestRequest: function() {
 		data = {
 			requester: $("#requester").val(),

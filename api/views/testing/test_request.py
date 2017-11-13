@@ -2,6 +2,7 @@
 from api.serializers.testing.template import TemplateSerializer
 from api.serializers.testing.test_request import TestRequestSerializer, \
     TestRequestQuerySerializer
+from api.serializers.testing.test_runner import TestRunnerSerializer
 from rest_framework.decorators import list_route, detail_route
 from rest_framework.exceptions import NotFound
 from rest_framework.pagination import LimitOffsetPagination
@@ -28,6 +29,11 @@ class TestRequestViewSet(ModelViewSet):
     def get_test_templates(self, request):
         return Response(TemplateSerializer(TestRequestService.get_available_templates(),
                                            many=True).data)
+
+    @list_route(url_path='test-runner')
+    def get_test_runners(self, request):
+        return Response(TestRunnerSerializer(TestRequestService.get_supported_test_runners(),
+                                             many=True).data)
 
     @detail_route(url_path='log')
     def get_test_log(self, request, pk):

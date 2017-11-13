@@ -61,6 +61,15 @@ class MainTestCase(APITestCase):
         for test_request in response.data:
             self.assertIn('name', test_request)
 
+    def test_get_test_runners_list(self):
+        url = reverse('rest-api:test-request-test-runner')
+        data = {}
+        response = self.client.get(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        for test_request in response.data:
+            self.assertIn('code', test_request)
+            self.assertIn('name', test_request)
+
     @patch('testing.services.test_request.TestRequestService._execute_test_command',
            lambda x, y: None)
     def test_create_test_request(self):
