@@ -36,6 +36,7 @@ SECRET_KEY = '!_s9j#69f4+xi%q4o-%h75wph)@ebw6yovshajygoo9zsuy6e&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+SERVE_STATIC_FILES_IN_DEBUG_FALSE = True
 
 ALLOWED_HOSTS = []
 
@@ -141,6 +142,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOCAL_HOST_NAME = "localhost:8000"
+ADMIN_HOST_NAME = LOCAL_HOST_NAME
+HOST_NAME = LOCAL_HOST_NAME
+
+STATIC_URL = 'http://%s/static/' % LOCAL_HOST_NAME
+MEDIA_URL = 'http://%s/media/' % LOCAL_HOST_NAME
 
 # Session settings.
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
