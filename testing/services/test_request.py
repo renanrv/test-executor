@@ -24,6 +24,7 @@ class TestRequestService():
 
     @classmethod
     def _check_if_test_request_log_displays_success(cls, test_request):
+        """Return True if test request log indicates successful execution."""
         if test_request.log is not None and \
                 ((test_request.test_runner == cls._get_pytest_test_runner() and
                   "FAILURES" not in test_request.log) or
@@ -34,6 +35,7 @@ class TestRequestService():
 
     @classmethod
     def _check_if_test_runner_is_valid(cls, test_runner):
+        """Return True if test runner is valid and  supported."""
         for test_runner_option in TEST_RUNNER_CHOICES:
             if test_runner_option[0] == test_runner:
                 return True
@@ -41,6 +43,7 @@ class TestRequestService():
 
     @classmethod
     def create_test_request(cls, serialized_test_request):
+        """Handle test request creation."""
         custom_path = serialized_test_request.validated_data.get('custom_path')
         environment_id = serialized_test_request.validated_data.get('environment')
         requester_name = serialized_test_request.validated_data.get('requester')
@@ -61,6 +64,9 @@ class TestRequestService():
 
     @classmethod
     def _execute_test_command(cls, test_request, template):
+        """Execute proper test command and save log to a file in a non-blocking way
+        to support live update of status and execution log.
+        """
         filename = TEST_REQUEST_LOG_FILENAME % test_request.id
         command = cls._get_test_runner_command(test_request, template)
         log = ""
@@ -73,6 +79,7 @@ class TestRequestService():
 
     @classmethod
     def get_available_templates(cls):
+        """Return list of available templates read from file system."""
         available_templates = []
         for template_file in listdir(TEST_TEMPLATES_PATH):
             if isfile(join(TEST_TEMPLATES_PATH, template_file)) and template_file.startswith("test"):
@@ -81,10 +88,12 @@ class TestRequestService():
 
     @classmethod
     def get_all_test_requests(cls):
+        """Return all test requests from database."""
         return TestRequest.objects.all()
 
     @classmethod
     def get_supported_test_runners(cls):
+        """Return list of supported test runners."""
         supported_test_runners = []
         for test_runner in TEST_RUNNER_CHOICES:
             supported_test_runners.append(TestRunnerValueObject(code=test_runner[0],
@@ -93,10 +102,12 @@ class TestRequestService():
 
     @classmethod
     def get_test_request_by_id(cls, test_request_id):
+        """Return test request by ID."""
         return TestRequest.objects.filter(id=test_request_id).first()
 
     @classmethod
     def get_test_request_log(cls, test_request):
+        """Return test request with log read from log file."""
         filename = TEST_REQUEST_LOG_FILENAME % test_request.id
         log = ""
         try:
@@ -109,30 +120,37 @@ class TestRequestService():
 
     @classmethod
     def _get_django_testcase_test_runner(cls):
+        """Return Django specific test runner option."""
         return TEST_RUNNER_CHOICES[3][0]
 
     @classmethod
     def _get_failed_status(cls):
+        """Return failed status option."""
         return TEST_REQUEST_STATUS_CHOICES[2][0]
 
     @classmethod
     def _get_nose_test_runner(cls):
+        """Return nose specific test runner option."""
         return TEST_RUNNER_CHOICES[2][0]
 
     @classmethod
     def _get_pytest_test_runner(cls):
+        """Return py.test specific test runner option."""
         return TEST_RUNNER_CHOICES[1][0]
 
     @classmethod
     def get_requested_status(cls):
+        """Return requested status option."""
         return TEST_REQUEST_STATUS_CHOICES[0][0]
 
     @classmethod
-    def _get_suceeded_status(cls):
+    def _get_succeeded_status(cls):
+        """Return succeeded status option."""
         return TEST_REQUEST_STATUS_CHOICES[1][0]
 
     @classmethod
     def _get_test_request_template_for_execution(cls, test_request, template, custom_path):
+        """Return proper template for execution depending on custom path and test runner fields."""
         template = EXECUTION_TEST_TEMPLATES_PATH + template
         if custom_path is None or custom_path == "":
             template_for_execution = template
@@ -147,6 +165,7 @@ class TestRequestService():
 
     @classmethod
     def _get_test_request_template_from_template_and_custom_path(cls, template, custom_path):
+        """Return template text for display purposes."""
         if custom_path is None or custom_path == "":
             return template
         else:
@@ -154,6 +173,7 @@ class TestRequestService():
 
     @classmethod
     def _get_test_runner_command(cls, test_request, template):
+        """Return proper test runner command."""
         command = []
         if test_request.test_runner == cls._get_unittest_test_runner():
             command.append(sys.executable)
@@ -182,14 +202,16 @@ class TestRequestService():
 
     @classmethod
     def _get_unittest_test_runner(cls):
+        """Return unittest specific test runner option."""
         return TEST_RUNNER_CHOICES[0][0]
 
     @classmethod
     def run_test_request(cls, test_request, template):
+        """Run test command and update status and log of a test request."""
         log = cls._execute_test_command(test_request, template)
         test_request.log = log
         if cls._check_if_test_request_log_displays_success(test_request):
-            test_request.status = cls._get_suceeded_status()
+            test_request.status = cls._get_succeeded_status()
         else:
             test_request.status = cls._get_failed_status()
         with transaction.atomic():
@@ -198,6 +220,7 @@ class TestRequestService():
 
     @classmethod
     def _save_test_request(cls, environment_id, requester_name, test_runner, template, custom_path):
+        """Save test request object to database."""
         cls._validate_test_request_creation(environment_id, requester_name,
                                             test_runner, template, custom_path)
 
@@ -219,6 +242,7 @@ class TestRequestService():
 
     @classmethod
     def _validate_test_request_creation(cls, environment_id, requester_name, test_runner, template, custom_path):
+        """Validate test request object."""
         environment = \
             EnvironmentService.get_environment_by_id(environment_id)
         if environment is None:

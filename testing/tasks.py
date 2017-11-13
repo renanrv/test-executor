@@ -5,11 +5,14 @@ import traceback
 
 
 def countdown(attempts):
+    """Return a exponential value to indicate a countdown for retries of Celery
+    tasks that have failed."""
     return 2 ** attempts
 
 
 @celery_app.task(bind=True, max_retries=10)
 def execute_test_request(self, test_request_id, template_for_execution):
+    """Execute a test command asynchronously using Celery."""
     from testing.services.test_request import TestRequestService
     try:
         test_request = TestRequestService.get_test_request_by_id(test_request_id)

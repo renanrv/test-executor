@@ -22,10 +22,12 @@ class TestRequest(models.Model):
 
     @property
     def status_value_object(self):
+        """Return a value object representing the test request status field."""
         return StatusValueObject(code=self.status,
                                  name=TEST_REQUEST_STATUS_CHOICES[self.status][1])
 
     @property
     def test_runner_value_object(self):
+        """Return a value object representing the test request test runner field."""
         return TestRunnerValueObject(code=self.test_runner,
                                      name=TEST_RUNNER_CHOICES[self.test_runner][1])
