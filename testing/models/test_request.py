@@ -28,4 +28,4 @@ class TestRequest(models.Model):
     @property
     def test_runner_value_object(self):
         return TestRunnerValueObject(code=self.test_runner,
-                                     name=TEST_RUNNER_CHOICES[self.status][1])
+                                     name=TEST_RUNNER_CHOICES[self.test_runner][1])

@@ -182,3 +182,5 @@ CELERYD_TASK_SOFT_TIME_LIMIT = 60
 CELERY_ROUTES = {
     "testing.tasks.execute_test_request": {"queue": "log"},
 }
+
+TEST_RUNNER = 'main.utils.CeleryTestSuiteRunner'

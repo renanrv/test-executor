@@ -31,6 +31,10 @@ $.ajaxSetup({
 });
 
 var testRequestService = {
+	clearTestRequestForm: function() {
+		$("form")[0].reset();
+	},
+
 	updateTableRowColors: function() {
 		$("tr .status").each(function(){
 			$this = $(this);
@@ -103,6 +107,7 @@ var testRequestService = {
 	        	$("#test-requests-results tr:first").after(row);
 	        	testRequestService.updateTableRowColors();
 	        	testRequestService.getTestRequest(testRequest.id);
+	        	testRequestService.clearTestRequestForm();
 	        }
 	    });
 	}

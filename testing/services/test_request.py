@@ -24,10 +24,11 @@ class TestRequestService():
 
     @classmethod
     def _check_if_test_request_log_displays_success(cls, test_request):
-        if (test_request.test_runner == cls._get_pytest_test_runner() and
-                "FAILURES" not in test_request.log) or \
-                (test_request.test_runner != cls._get_pytest_test_runner() and
-                 "OK" in test_request.log):
+        if test_request.log is not None and \
+                ((test_request.test_runner == cls._get_pytest_test_runner() and
+                  "FAILURES" not in test_request.log) or
+                 (test_request.test_runner != cls._get_pytest_test_runner() and
+                  "OK" in test_request.log)):
             return True
         return False
 
@@ -57,6 +58,18 @@ class TestRequestService():
                                                                               custom_path)
         execute_test_request.delay(test_request.id, template_for_execution)
         return test_request
+
+    @classmethod
+    def _execute_test_command(cls, test_request, template):
+        filename = TEST_REQUEST_LOG_FILENAME % test_request.id
+        command = cls._get_test_runner_command(test_request, template)
+        log = ""
+        with io.open(filename, 'wb') as writer, io.open(filename, 'rb', 1) as reader:
+            process = subprocess.Popen(command, stdout=writer, stderr=writer)
+            while process.poll() is None:
+                log += reader.read().decode('utf-8')
+            reader.read()
+        return log
 
     @classmethod
     def get_available_templates(cls):
@@ -165,14 +178,7 @@ class TestRequestService():
 
     @classmethod
     def run_test_request(cls, test_request, template):
-        filename = TEST_REQUEST_LOG_FILENAME % test_request.id
-        command = cls._get_test_runner_command(test_request, template)
-        log = ""
-        with io.open(filename, 'wb') as writer, io.open(filename, 'rb', 1) as reader:
-            process = subprocess.Popen(command, stdout=writer, stderr=writer)
-            while process.poll() is None:
-                log += reader.read().decode('utf-8')
-            reader.read()
+        log = cls._execute_test_command(test_request, template)
         test_request.log = log
         if cls._check_if_test_request_log_displays_success(test_request):
             test_request.status = cls._get_suceeded_status()
