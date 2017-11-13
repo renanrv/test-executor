@@ -1,5 +1,7 @@
+.cache
 static-collected
 media
+logs
 *.pyc
 *.project
 *.pydevproject
