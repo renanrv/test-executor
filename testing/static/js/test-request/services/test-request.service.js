@@ -45,6 +45,9 @@ var testRequestService = {
 	},
 
 	formatTestRequestRow: function(testRequest) {
+		log = testRequest.log;
+		if(log != null && log.indexOf("\n") > -1)
+			log = log.replace(/\n/g, '<br />');
 		row = "<tr id='" + testRequest.id + "'>" +
 			"<td>" + testRequest.id + "</td>" +
 			"<td>" + testRequest.requester + "</td>" +
@@ -53,7 +56,7 @@ var testRequestService = {
 			"<td>" + testRequest.test_runner.name + "</td>" +
 			"<td>" + testRequest.template + "</td>" +
 			"<td class='status'>" + testRequest.status.name + "</td>" +
-			"<td>" + testRequest.log + "</td>" +
+			"<td><span>" + log + "</span></td>" +
 			"</tr>";
 		return row;
 	},
