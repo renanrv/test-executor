@@ -46,12 +46,27 @@ var testRequestService = {
 				$this.parent().css('background-color','red');
 			
 		})
+		$('.expan').click(function () {
+			var $ul = $(this).find('span').next();
+			$(".inner_div").not($ul).hide();
+			$( '.expan span' ).html( '[+]' );
+			if( !$ul.is( ':visible' ) ) {
+				$(this).find('span').html( '[&ndash;]');
+			}
+			$ul.slideToggle();
+		});
 	},
 
 	formatTestRequestRow: function(testRequest) {
 		log = testRequest.log;
 		if(log != null && log.indexOf("\n") > -1)
 			log = log.replace(/\n/g, '<br />');
+		is_log_visible = $('tr#' + testRequest.id + ' .inner_div').is(":visible");
+		if(is_log_visible)
+			log_html = "<span>[&ndash;]</span><div class='inner_div' style='display: block;'>" + log + "</div>";
+		else
+			log_html = "<span>[+]</span><div class='inner_div' style='display: none;'>" + log + "</div>";
+		
 		row = "<tr id='" + testRequest.id + "'>" +
 			"<td>" + testRequest.id + "</td>" +
 			"<td>" + testRequest.requester + "</td>" +
@@ -60,7 +75,7 @@ var testRequestService = {
 			"<td>" + testRequest.test_runner.name + "</td>" +
 			"<td>" + testRequest.template + "</td>" +
 			"<td class='status'>" + testRequest.status.name + "</td>" +
-			"<td><span>" + log + "</span></td>" +
+			"<td class='expan'>" + log_html + "</td>" +
 			"</tr>";
 		return row;
 	},
