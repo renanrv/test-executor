@@ -124,7 +124,7 @@ class TestRequestService():
         return TEST_RUNNER_CHOICES[1][0]
 
     @classmethod
-    def _get_requested_status(cls):
+    def get_requested_status(cls):
         return TEST_REQUEST_STATUS_CHOICES[0][0]
 
     @classmethod
@@ -211,7 +211,7 @@ class TestRequestService():
         test_request.template = \
             cls._get_test_request_template_from_template_and_custom_path(template,
                                                                          custom_path)
-        test_request.status = cls._get_requested_status()
+        test_request.status = cls.get_requested_status()
         with transaction.atomic():
             test_request.save()
             EnvironmentService.set_environment_not_available(test_request.environment)
