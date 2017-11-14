@@ -25,6 +25,7 @@ Supported test runners:
 * `$ cd test-executor`
 * `$ pip install -r requirements.txt`
 * `$ Optional custom settings: main/settings.py`
+* `$ python manage.py migrate`
 * `$ python manage.py runserver`
 * `$ celery -A main worker -Q log`
 
